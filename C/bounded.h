@@ -7,7 +7,15 @@
 typedef uint_least32_t ubounded;
 #define UBOUNDED_MAX UINT32_MAX
 
-static inline ubounded max(ubounded x, ubounded y) {
+/*
+Windows.h includes minwindef.h which defines a "max" macro that causes the
+following function definition to fail compilation with "error: C2059" on MSVC.
+
+https://github.com/tpn/winsdk-10/blob/9b69fd26ac0c7d0b83d378dba01080e93349c2ed/Include/10.0.10240.0/shared/minwindef.h#L193
+*/
+#undef max
+
+static inline ubounded max(uint_least32_t x, uint_least32_t y) {
   return x <= y ? y : x;
 }
 
