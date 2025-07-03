@@ -17,11 +17,16 @@ jobs:
       matrix:
         project: ["c", "haskell"] # coq takes a very long time and times out at 6 hours...
         os: ["ubuntu-latest", macos-latest]
+        channel: ["nixos-25.05", "nixpkgs-unstable"]
     runs-on: ${{ matrix.os }}
     permissions:
       id-token: write
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: DeterminateSystems/determinate-nix-action@v3.5.2
+      - uses: DeterminateSystems/nix-installer-action@v17
+      - name: update channel ${{matrix.channel}}
+        run: |
+          nix-channel --add https://nixos.org/channels/${{matrix.channel}} nixpkgs
+          nix-channel --update
       - run: nix-build -A ${{matrix.project}}
